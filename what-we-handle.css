@@ -1,0 +1,187 @@
+/* "What we handle" block — Figma node 383:1013 (Website-Exploration) */
+
+:root {
+  --wwh-bg: #ececec;
+  --wwh-ink: #000;
+  --wwh-accent: #ff5900;
+  --wwh-card-bg: rgba(0, 0, 0, 0.06);
+  --wwh-card-border: #d0d0d0;
+
+  --wwh-pad: 24px;          /* panel padding */
+  --wwh-heading-h: 24px;    /* 20px × 1.2 line-height */
+  --wwh-gap: 64px;          /* heading → first card */
+  --wwh-card-h: 170px;
+  --wwh-card-gap: 24px;
+  /* where the first card rests (top of the scroll area) */
+  --wwh-rest: calc(var(--wwh-pad) + var(--wwh-heading-h) + var(--wwh-gap));
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--wwh-bg);
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--wwh-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Block ---------- */
+.wwh {
+  display: flex;
+  align-items: stretch;
+  gap: 64px;
+  padding: 128px 64px;
+  background: var(--wwh-bg);
+}
+
+.wwh-left {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 48px;
+}
+
+.wwh-copy { display: flex; flex-direction: column; gap: 24px; }
+
+.wwh-title {
+  margin: 0;
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 1;
+  letter-spacing: -1.92px;
+}
+.wwh-accent { color: var(--wwh-accent); }
+
+.wwh-body {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.6px;
+}
+
+.wwh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border: 1px solid #000;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  color: #000;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: -0.36px;
+  white-space: nowrap;
+}
+
+/* ---------- Right panel ---------- */
+.wwh-panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 349px;
+  border-radius: 24px;
+  overflow: clip;
+}
+
+.wwh-heading {
+  position: absolute;
+  z-index: 2;                         /* sits above the scrolling cards */
+  top: var(--wwh-pad);
+  left: var(--wwh-pad);
+  right: var(--wwh-pad);
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.6px;
+  pointer-events: none;
+}
+
+/* Scroll area fills the whole panel, so cards can travel up *behind* the heading */
+.wwh-scroller {
+  position: absolute;
+  inset: 0;
+  container-type: size;               /* lets the end spacer use the panel height */
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: auto;          /* hand scrolling back to the page at either end */
+  scroll-snap-type: y proximity;
+  scroll-padding-top: var(--wwh-rest);
+  scrollbar-width: none;
+  outline: none;
+
+  /* Fade cards out as they pass behind the heading:
+     fully hidden through the heading, fully visible by the resting position. */
+  --fade-clear: calc(var(--wwh-pad) + var(--wwh-heading-h) + 8px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent var(--fade-clear), #000 var(--wwh-rest));
+          mask-image: linear-gradient(to bottom, transparent 0, transparent var(--fade-clear), #000 var(--wwh-rest));
+}
+.wwh-scroller::-webkit-scrollbar { display: none; }
+.wwh-scroller:focus-visible { box-shadow: inset 0 0 0 2px var(--wwh-accent); border-radius: 24px; }
+
+.wwh-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--wwh-rest) var(--wwh-pad) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--wwh-card-gap);
+}
+/* spacer so the last card can rest at the same spot as the first */
+.wwh-list::after {
+  content: "";
+  flex: none;
+  height: max(0px, calc(100cqh - var(--wwh-rest) - var(--wwh-card-h) - var(--wwh-card-gap)));
+}
+
+.wwh-card {
+  flex: none;
+  width: 100%;
+  max-width: 350px;
+  height: var(--wwh-card-h);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: var(--wwh-card-bg);
+  border: 1px solid var(--wwh-card-border);
+  border-radius: 12px;
+  scroll-snap-align: start;
+}
+.wwh-card img { display: block; width: 32px; height: 32px; }
+.wwh-card p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.48px;
+}
+
+/* Soft fade at the bottom edge of the panel (from the design) */
+.wwh-fade-bottom {
+  position: absolute;
+  z-index: 1;
+  left: 0; right: 0; bottom: 0;
+  height: 81px;
+  background: linear-gradient(to top, var(--wwh-bg) 0%, rgba(236, 236, 236, 0) 108%);
+  pointer-events: none;
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 900px) {
+  .wwh { flex-direction: column; padding: 64px 24px; gap: 48px; }
+  .wwh-title { font-size: 36px; letter-spacing: -1.44px; }
+  .wwh-panel { min-height: 420px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wwh-scroller { scroll-behavior: auto; scroll-snap-type: none; }
+}
