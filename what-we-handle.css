@@ -143,6 +143,11 @@ html, body {
   height: max(0px, calc(100cqh - var(--wwh-rest) - var(--wwh-card-h) - var(--wwh-card-gap)));
 }
 
+/* Once JS turns the list into an endless loop (auto-scroll), the end spacer
+   and CSS snapping are replaced by the script's own wrap-around + glide. */
+.wwh-scroller.is-loop { scroll-snap-type: none; }
+.wwh-list.is-loop::after { display: none; }
+
 .wwh-card {
   flex: none;
   width: 100%;
